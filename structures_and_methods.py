@@ -21,7 +21,7 @@ class loan(object):
         self.country = country
         self.additionality = additionality
         self.climate_change = climate_change
-        self.bio_diversity = bid_diversity
+        self.bio_diversity = bio_diversity
         self.soil_degradation = soil_degradation
         self.water_scarcity = water_scarcity
         self.certification = certification
@@ -111,9 +111,10 @@ class loan(object):
     def get_exp_net_income(self):
         return self.exp_net_income
     
+    """
     def __str__(self):
-        return "#" + str(self.loan_number) \
-        + "\n Loan Amount: $" + str(self.loan_amount) \
+        return ('#' + str(self.loan_number) \
+        + '\n Loan Amount: $' + str(self.loan_amount) \
         + '\n Industry: ' + str(self.industry) + \
         + '\n Lending Region: ' + str(self.lending_region) \
         + '\n Country: ' + str(self.country) + \
@@ -135,7 +136,10 @@ class loan(object):
         + '\n Expected Operating Costs: ' + str(self.exp_op_costs) \
         + '\n Expected Cost of Debt: ' + str(self.exp_cost_debt) \
         + '\n Expected Cost of Risk: ' + str(self.exp_cost_risk) \
-        + '\n Expected Net Loan Income: ' + str(self.exp_net_income)
-        
+        + '\n Expected Net Loan Income: ' + str(self.exp_net_income))
+        """
+
+
+
 # Try to upload the csv loan data into this data structure.
  
