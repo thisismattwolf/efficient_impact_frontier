@@ -4,6 +4,8 @@ Created on Wed Mar  6 12:29:23 2019
 
 @author: Matthew Wolf
 
+Example Loan:
+    1, 410000, 'Coffee', 'South America', 'Peru', 'Low', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'No', 'Moderate Poverty', 'No', 'Yes', 315, 34, 0.00427, 37323, -19215, -8444, -5215, 4449
 
 """
 
@@ -111,6 +113,71 @@ class loan(object):
     def get_exp_net_income(self):
         return self.exp_net_income
     
+    def livelihoods_points(self):
+        # max points contribution: 1.0
+        if self.livelihood == 'Yes':
+            return 1.0
+        else:
+            return 0.0
+    
+    def environement_and_climate_points(self):
+        # max points contribution: 1.0
+        rating = 0
+        if self.certification == 'Yes':
+            rating = rating + 0.5
+        if self.sust_forestry == 'Yes':
+            rating = rating + 0.25
+        if self.clean_tech == 'Yes':
+            rating = rating + 0.25
+        return rating
+    
+    def scale_points(self):
+        # max points contribution: 0.5
+        rating = 0
+        if self.farmers_employees >= 1500:
+            rating = rating + 0.5
+        if self.farmers_employees >= 500:
+            rating = rating + 0.25
+        return rating
+    
+    def poverty_level_points(self):
+        # max points contribution: 0.5
+        rating = 0    
+        if self.poverty_level == 'Extreme Poverty':
+            rating = rating + 0.5
+        elif self.poverty_level == 'High Poverty':
+            rating = rating + 0.25
+        else:
+            rating = rating
+        return rating
+        
+    def environmental_vulnerability_points(self):
+        # max points contribution: 0.5
+        rating = 0
+        if self.bio_diversity == "Yes":
+            rating = rating + 1
+        if self.soil_degradation == "Yes":
+            rating = rating + 1
+        if self.water_scarcity == "Yes":
+            rating = rating + 1
+        if self.climate_change == "Yes":
+            rating = rating + 1
+
+        if rating > 1:
+            return 0.5
+        elif rating > 0:
+            return 0.25
+        else: 
+            return 0.0
+
+    def get_additionality_points(self):
+        if self.additionality == 'High':
+            return 6.5
+        elif self.additionality == 'Medium':
+            return 3.0
+        else:
+            return 0.0    
+        
     """
     def __str__(self):
         return ('#' + str(self.loan_number) \
@@ -139,7 +206,33 @@ class loan(object):
         + '\n Expected Net Loan Income: ' + str(self.exp_net_income))
         """
 
+# Situation One
+        
+# 
+
+
+# Constraints
+"""
+def netProfit(loans):
+    for loan in loans:
+        if loan.get_exp_net_income > 0:
+            return True
+        else:
+            return False
+
+def portfolio01Knapsack(items, constraintsFunction, valueFunction):
+    # items is a list of all possible loans
+    # constraints is a list of Boolean conditions to pass to filter()
+    # value is a function
+    itemsCopy = sorted(items, key=valueFunction, reverse=True)
+    itemsFilter = filter(constraintsFunction, itemsCopy)
+    return itemsFilter
 
 
 # Try to upload the csv loan data into this data structure.
- 
+# Ranking of loans depends on sorted() with hyperargument 'key=keyFunction'.
+        # Need to determine keyFunctions for 3 portfolios
+# Is there something similar to sorted that acts as a filter, so we can set a
+        # key function for constraints and then filter out loans based on that?
+        # Could this all be done in Pandas without the data structure?
+"""
