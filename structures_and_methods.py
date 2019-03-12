@@ -120,7 +120,7 @@ class loan(object):
         else:
             return 0.0
     
-    def environement_and_climate_points(self):
+    def environment_and_climate_points(self):
         # max points contribution: 1.0
         rating = 0
         if self.certification == 'Yes':
@@ -170,15 +170,28 @@ class loan(object):
         else: 
             return 0.0
 
-    def get_additionality_points(self):
+    def additionality_points(self):
         if self.additionality == 'High':
             return 6.5
         elif self.additionality == 'Medium':
             return 3.0
         else:
             return 0.0    
-        
-    """
+
+def get_impact_rating(loan):
+    rating = loan.additionality_points() + \
+                loan.environmental_vulnerability_points() + \
+                loan.poverty_level_points() + \
+                loan.scale_points() + \
+                loan.environment_and_climate_points() + \
+                loan.livelihoods_points()
+    return rating
+
+# 1. csv with columns in same order as arguments of __init__ of loan class
+# 2. iterate through csv, adding each row to list of loans
+
+
+"""
     def __str__(self):
         return ('#' + str(self.loan_number) \
         + '\n Loan Amount: $' + str(self.loan_amount) \
