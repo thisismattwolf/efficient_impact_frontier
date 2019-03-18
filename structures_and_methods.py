@@ -178,18 +178,26 @@ class loan(object):
         else:
             return 0.0    
 
-def get_impact_rating(loan):
-    rating = loan.additionality_points() + \
-                loan.environmental_vulnerability_points() + \
-                loan.poverty_level_points() + \
-                loan.scale_points() + \
-                loan.environment_and_climate_points() + \
-                loan.livelihoods_points()
-    return rating
+    def get_impact_rating(self):
+        rating = self.additionality_points() + \
+                self.environmental_vulnerability_points() + \
+                self.poverty_level_points() + \
+                self.scale_points() + \
+                self.environment_and_climate_points() + \
+                self.livelihoods_points()
+        
+        return rating
+
+test_loan = loan(1, 410000, 'Coffee', 'South America', 'Peru', 'Low', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'No', 'Moderate Poverty', 'No', 'Yes', 315, 34, 0.00427, 37323, -19215, -8444, -5215, 4449)
 
 # 1. csv with columns in same order as arguments of __init__ of loan class
 # 2. iterate through csv, adding each row to list of loans
+# 3. Create Series of impact ratings, Series of expected incomes
+# 4. Scatter of impact vs expected income
 
+import pandas as pd
+
+loan_data = pd.read_csv('IFA_Assignment_Data.csv')
 
 """
     def __str__(self):
