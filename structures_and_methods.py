@@ -9,7 +9,7 @@ Example Loan:
 
 """
 
-class loan(object):
+class Loan(object):
     def __init__(self, loan_number, loan_amount, industry, lending_region, country, \
                  additionality, climate_change, bio_diversity, soil_degradation, \
                  water_scarcity, certification, sust_forestry, clean_tech, poverty_level, \
@@ -188,72 +188,54 @@ class loan(object):
         
         return rating
 
-test_loan = loan(1, 410000, 'Coffee', 'South America', 'Peru', 'Low', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'No', 'Moderate Poverty', 'No', 'Yes', 315, 34, 0.00427, 37323, -19215, -8444, -5215, 4449)
+test_loan = Loan(1, 410000, 'Coffee', 'South America', 'Peru', 'Low', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'No', 'Moderate Poverty', 'No', 'Yes', 315, 34, 0.00427, 37323, -19215, -8444, -5215, 4449)
 
 # 1. csv with columns in same order as arguments of __init__ of loan class
 # 2. iterate through csv, adding each row to list of loans
 # 3. Create Series of impact ratings, Series of expected incomes
 # 4. Scatter of impact vs expected income
 
-import pandas as pd
+def plot_loans(dataframe):
+    # intended to take DataFrame of loans data with needed columns to generate a 
+    # scatter plot of Expected Impact (X) vs. Expected Net Income (Y) - either 
+    # for a full universe or for a portfolio
+    pass
 
-loan_data = pd.read_csv('IFA_Assignment_Data.csv')
+def plot_portfolios(dataframe):
+    # intended to take a DataFrame of portfolios data with needed columns to 
+    # generate a chart of their positions on the Efficient Impact Frontier
+    pass
 
-"""
-    def __str__(self):
-        return ('#' + str(self.loan_number) \
-        + '\n Loan Amount: $' + str(self.loan_amount) \
-        + '\n Industry: ' + str(self.industry) + \
-        + '\n Lending Region: ' + str(self.lending_region) \
-        + '\n Country: ' + str(self.country) + \
-        + '\n Loan Additionality: ' + str(self.additionality) \
-        + '\n Climate Change Hotspot?: ' + str(self.climate_change) \
-        + '\n Biodiversity Hotspot?: ' + str(self.bio_diversity) \
-        + '\n Soil Degradation Hotspot?: ' + str(self.soil_degradation) \
-        + '\n Water Scarcity Hotspot?: ' + str(self.water_scarcity) \
-        + '\n Certification?: ' + str(self.certification) \
-        + '\n Trees for conservation or carbon capture?: ' + str(self.sust_forestry) \
-        + '\n Clean tech for emissions reduction?: ' + str(self.clean_tech) \
-        + '\n Poverty Level: ' + str(self.poverty_level) \
-        + '\n Gender Inclusion?: ' + str(self.gender) \
-        + '\n Livelihood Improvement: ' + str(self.livelihood) \
-        + '\n Farmers / Employees Impacted: ' + str(self.farmers_employees) \
-        + '\n Female Farmers / Employees Impacted: ' + str(self.female_farmers_employees) \
-        + '\n Probability of Default: ' + str(self.default_prob) \
-        + '\n Expected Revenues: ' + str(self.exp_revenue) \
-        + '\n Expected Operating Costs: ' + str(self.exp_op_costs) \
-        + '\n Expected Cost of Debt: ' + str(self.exp_cost_debt) \
-        + '\n Expected Cost of Risk: ' + str(self.exp_cost_risk) \
-        + '\n Expected Net Loan Income: ' + str(self.exp_net_income))
-        """
+def greedy(loans, keyFunction):
+    # Greedy algorithm, only constraint is we can only take 20 items
+    # assumes loans is a list of loan instances, keyFunction is a class method
+    # of the loan class
+    
+    loans_copy = sorted(loans, key=keyFunction, reverse=True)
+    
+    result = []
+    
+    total_expected_impact, total_expected_return = 0.0, 0.0
+    
+    for i in range(0,20):
+        result.append(loans_copy[i])
+        total_expected_impact += loans_copy[i].get_impact_rating()
+        total_expected_return += loans_copy[i].get_exp_net_income()
+    
+    return result, total_expected_impact, total_expected_return
 
-# Situation One
-        
-# 
+def test_greedy(loans, keyFunction):
+    loaned, impact, net_income = greedy(loans, keyFunction)
+    print('Total Impact Rating of Loans: ' + str(impact))
+    print('Total Net Income of Loans:    $' + str(net_income))
+    for loan in loaned:
+        print('Loan #: ' + str(int(loan.get_loan_number())))
 
+def test_greedies(loans):
+    print('Use greedy by impact to choose loans to make: ')
+    test_greedy(loans, Loan.get_impact_rating)
+    print('\nUse greedy by net income to choose loans to make: ')
+    test_greedy(loans, Loan.get_exp_net_income)
+    print('\nUse greedy by # of female farmers or employees affected: ')
+    test_greedy(loans, Loan.get_female_farmers_employees)
 
-# Constraints
-"""
-def netProfit(loans):
-    for loan in loans:
-        if loan.get_exp_net_income > 0:
-            return True
-        else:
-            return False
-
-def portfolio01Knapsack(items, constraintsFunction, valueFunction):
-    # items is a list of all possible loans
-    # constraints is a list of Boolean conditions to pass to filter()
-    # value is a function
-    itemsCopy = sorted(items, key=valueFunction, reverse=True)
-    itemsFilter = filter(constraintsFunction, itemsCopy)
-    return itemsFilter
-
-
-# Try to upload the csv loan data into this data structure.
-# Ranking of loans depends on sorted() with hyperargument 'key=keyFunction'.
-        # Need to determine keyFunctions for 3 portfolios
-# Is there something similar to sorted that acts as a filter, so we can set a
-        # key function for constraints and then filter out loans based on that?
-        # Could this all be done in Pandas without the data structure?
-"""
