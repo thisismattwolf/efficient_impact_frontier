@@ -184,9 +184,16 @@ class Loan(object):
                 self.poverty_level_points() + \
                 self.scale_points() + \
                 self.environment_and_climate_points() + \
-                self.livelihoods_points()
-        
+                self.livelihoods_points()        
         return rating
+    
+    def get_impact_group(self):
+        if self.get_impact_rating() <= 3.0:
+            return 'Low'
+        elif self.get_impact_rating() <= 6.5:
+            return 'Intermediate'
+        else:
+            return 'High'
 
 test_loan = Loan(1, 410000, 'Coffee', 'South America', 'Peru', 'Low', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'No', 'Moderate Poverty', 'No', 'Yes', 315, 34, 0.00427, 37323, -19215, -8444, -5215, 4449)
 
@@ -195,16 +202,25 @@ test_loan = Loan(1, 410000, 'Coffee', 'South America', 'Peru', 'Low', 'Yes', 'Ye
 # 3. Create Series of impact ratings, Series of expected incomes
 # 4. Scatter of impact vs expected income
 
-def plot_loans(dataframe):
+def plot_loans(loans):
     # intended to take DataFrame of loans data with needed columns to generate a 
     # scatter plot of Expected Impact (X) vs. Expected Net Income (Y) - either 
     # for a full universe or for a portfolio
-    pass
-
-def plot_portfolios(dataframe):
-    # intended to take a DataFrame of portfolios data with needed columns to 
-    # generate a chart of their positions on the Efficient Impact Frontier
-    pass
+    import pandas, seaborn
+    df = pandas.DataFrame()
+    for i in range(len(loans)):
+        df.at[i, 'Loan Object'] = loans[i]
+        df.at[i, 'Impact Rating'] = loans[i].get_impact_rating()
+        df.at[i, 'Net Income'] = loans[i].get_exp_net_income()
+        df.at[i, 'Impact Group'] = loans[i].get_impact_group()
+    
+    chart = seaborn.lmplot(x='Impact Rating',
+           y='Net Income',
+           data=df,
+           hue='Impact Group',
+           fit_reg=False)
+    chart.set(ylim=(-40000,30000))
+    chart.set(xlim=(0,10))
 
 def greedy(loans, keyFunction):
     # Greedy algorithm, only constraint is we can only take 20 items
@@ -230,12 +246,54 @@ def test_greedy(loans, keyFunction):
     print('Total Net Income of Loans:    $' + str(net_income))
     for loan in loaned:
         print('Loan #: ' + str(int(loan.get_loan_number())))
+    plot_loans(loaned)
 
 def test_greedies(loans):
-    print('Use greedy by impact to choose loans to make: ')
+    print('Use greedy by impact to choose loans in portfolio: ')
     test_greedy(loans, Loan.get_impact_rating)
-    print('\nUse greedy by net income to choose loans to make: ')
+    print('\nUse greedy by net income to choose loans in portfolio: ')
     test_greedy(loans, Loan.get_exp_net_income)
-    print('\nUse greedy by # of female farmers or employees affected: ')
+    print('\nUse greedy by # of female farmers or employees affected to choose loans in portfolio: ')
     test_greedy(loans, Loan.get_female_farmers_employees)
+
+def randomPortfolios(loans, number):
+    # assumes random has been imported already
+    # loans is a list of loan instanes, number is an int for the number of random
+    # portfolios desired
+    import random
+    portfolios = []
+    for i in range(number):
+        portfolio = random.sample(loans, 20)
+        portfolios.append(portfolio)
+    return portfolios
+        
+def calcPortfolioMetrics(portfolio):
+    portfolio_impact = 0
+    portfolio_income = 0
+    for loan in portfolio:
+        portfolio_impact += loan.get_impact_rating()
+        portfolio_income += loan.get_exp_net_income()
+    avg_impact = portfolio_impact / len(portfolio)
+    if avg_impact <= 3.0:
+        portfolio_impact_group = 'Low'
+    elif avg_impact <= 6.5:
+        portfolio_impact_group = 'Intermediate'
+    else:
+        portfolio_impact_group = 'High'
+    avg_income = portfolio_income / len(portfolio)
+    
+    return portfolio_impact, portfolio_income, portfolio_impact_group, avg_income
+
+def plotPortfolios(portfolios):
+    # intended to take a list of loan instances (the portfolio) and generate a 
+    # chart of their positions on the Efficient Impact Frontier
+    import seaborn as sns
+    sns.lmplot(x='impact',
+           y='income',
+           data=portfolios,
+           hue='impact-group',
+           fit_reg=False)
+    
+
+
 
