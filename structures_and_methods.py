@@ -197,6 +197,144 @@ class Loan(object):
 
 test_loan = Loan(1, 410000, 'Coffee', 'South America', 'Peru', 'Low', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'No', 'Moderate Poverty', 'No', 'Yes', 315, 34, 0.00427, 37323, -19215, -8444, -5215, 4449)
 
+class Portfolio(object):
+    
+    def __init__(self, loans): 
+        self.loans = loans
+        # Number of loans in portfolio
+        self.n = len(loans)
+    
+    # Total amount of portfolio's loans    
+    def get_total(self):
+        total = 0 
+        for loan in self.loans:
+            total += loan.get_loan_amount()
+        return total
+    
+    # List of unique IDs for loans
+    def get_loan_numbers(self):
+        numbers = []
+        for loan in self.loans:
+            numbers.append(loan.get_loan_number())
+        return numbers
+    
+    # List of amounts for loans
+    def get_loan_amounts(self):
+        amounts = []
+        for loan in self.loans:
+            amounts.append(loan.get_loan_amount())
+        return amounts
+    
+    # List of industries for loans
+    def get_industries(self):
+        industries = []
+        for loan in self.loans:
+            industries.append(loan.get_industry())
+        return industries
+    
+    # List of lending regions for loans
+    def get_regions(self):
+        regions = []
+        for loan in self.loans:
+            regions.append(loan.get_lending_region())
+        return regions
+    
+    # List of countries for loans
+    def get_countries(self):
+        countries = []
+        for loan in self.loans:
+            countries.append(loan.get_country())
+        return countries
+    
+    # List of additionalities for loans
+    def get_additionalities(self):
+        additionalities = []
+        for loan in self.loans:
+            additionalities.append(loan.get_additionality())
+        return additionalities
+    
+    # List of default probabilities for loans
+    def get_default_probs(self):
+        probs = []
+        for loan in self.loans:
+            probs.append(loan.get_default_prob())
+        return probs
+    
+    # number of total farmers/employees supported through loans
+    def get_farmers_employees(self):
+        total = 0 
+        for loan in self.loans:
+            total += loan.get_farmers_employees()
+        return total
+    
+    # number of total female farmers/employees supported through loans
+    def get_female_farmers_employees(self):
+        total = 0 
+        for loan in self.loans:
+            total += loan.get_female_farmers_employees()
+        return total
+
+    def get_total_net_income(self):
+        total = 0
+        for loan in self.loans:
+            total += loan.get_exp_net_income()
+        return total
+
+    def get_total_revenue(self):
+        total = 0
+        for loan in self.loans:
+            total += loan.get_exp_revenue()
+        return total
+    
+    def get_total_operating_expenses(self):
+        total = 0
+        for loan in self.loans:
+            total += loan.get_exp_op_costs()
+        return total
+    
+    def get_total_cost_debt(self):
+        total = 0
+        for loan in self.loans:
+            total += loan.get_cost_debt()
+        return total
+    
+    def get_total_cost_risk(self):
+        total = 0
+        for loan in self.loans:
+            total += loan.get_cost_risk()
+        return total
+    
+    def get_rate_of_return(self):
+        return self.get_total_net_income() / self.get_total()
+    
+    def get_avg_default_risk(self):
+        lists = self.get_loan_amounts(), self.get_default_probs()
+        num = sum([x * y for x, y in zip(*lists)])
+        return num / self.get_total()
+    
+    def portfolio_stats(self):
+        print("=========================PORTFOLIO STATSTICS=========================")
+        print("SCALE:")
+        print("Total # of Loans:                           " + str(self.n()))
+        print("Total Loan Amount:                          " + str(self.get_total()))
+        print("Total Farmers and Employees Reached:        " + str(self.get_farmers_employees()))
+        print("Total Female Farmers and Employees Reached: " + str(self.get_female_farmers_employees()))
+        print("=====================================================================")
+        print("ADDITIONALITY:")
+        print("% High Additionality:                       " + str(self.get_additionalities.count('High'))/self.n)
+        print("% Intermediate Additionality:               " + str(self.get_additionalities.count('Intermediate'))/self.n)
+        print("% Low Additionality:                        " + str(self.get_additionalities.count('Low'))/self.n)
+        print("=====================================================================")
+        print("FINANCIAL PERFORMANCE:")
+        print("Total Expected Net Income:                 $" + str(self.get_total_net_income()))
+        print("Total Expected Revenue:                    $" + str(self.get_total_revenue()))
+        print("Total Operating Expenses:                  $" + str(self.get_total_operating_expenses()))
+        print("Total Cost of Debt:                        $" + str(self.get_total_cost_debt()))
+        print("Total Cost of Risk:                        $" + str(self.get_total_cost_risk()))
+        print("Weighted Average Default Risk:              " + str(self.get_avg_default_risk()))
+        print("Portfolio Rate of Return:                   " + str(self.get_rate_of_return()))
+
+
 # 1. csv with columns in same order as arguments of __init__ of loan class
 # 2. iterate through csv, adding each row to list of loans
 # 3. Create Series of impact ratings, Series of expected incomes
@@ -293,7 +431,8 @@ def plotPortfolios(portfolios):
            data=portfolios,
            hue='impact-group',
            fit_reg=False)
-    
+
+
 
 
 
