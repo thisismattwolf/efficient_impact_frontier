@@ -3,10 +3,6 @@
 Created on Wed Mar  6 12:29:23 2019
 
 @author: Matthew Wolf
-
-Example Loan:
-    1, 410000, 'Coffee', 'South America', 'Peru', 'Low', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'No', 'Moderate Poverty', 'No', 'Yes', 315, 34, 0.00427, 37323, -19215, -8444, -5215, 4449
-
 """
 
 class Loan(object):
@@ -115,7 +111,7 @@ class Loan(object):
     
     def livelihoods_points(self):
         # max points contribution: 1.0
-        if self.livelihood == 'Yes':
+        if self.livelihood == True:
             return 1.0
         else:
             return 0.0
@@ -123,11 +119,11 @@ class Loan(object):
     def environment_and_climate_points(self):
         # max points contribution: 1.0
         rating = 0
-        if self.certification == 'Yes':
+        if self.certification == True:
             rating = rating + 0.5
-        if self.sust_forestry == 'Yes':
+        if self.sust_forestry == True:
             rating = rating + 0.25
-        if self.clean_tech == 'Yes':
+        if self.clean_tech == True:
             rating = rating + 0.25
         return rating
     
@@ -154,13 +150,13 @@ class Loan(object):
     def environmental_vulnerability_points(self):
         # max points contribution: 0.5
         rating = 0
-        if self.bio_diversity == "Yes":
+        if self.bio_diversity == True:
             rating = rating + 1
-        if self.soil_degradation == "Yes":
+        if self.soil_degradation == True:
             rating = rating + 1
-        if self.water_scarcity == "Yes":
+        if self.water_scarcity == True:
             rating = rating + 1
-        if self.climate_change == "Yes":
+        if self.climate_change == True:
             rating = rating + 1
 
         if rating > 1:
@@ -195,7 +191,12 @@ class Loan(object):
         else:
             return 'High'
 
-test_loan = Loan(1, 410000, 'Coffee', 'South America', 'Peru', 'Low', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'No', 'Moderate Poverty', 'No', 'Yes', 315, 34, 0.00427, 37323, -19215, -8444, -5215, 4449)
+# EXAMPLE LOANS
+loan1 = Loan(1,410000,'Coffee','South America','Peru','Low',True,True,True,False,True,False,False,'Moderate Poverty',False,True,315,34,0.00427,37323,-19215,-8444,-5215,4449)
+loan2 = Loan(2,102500,'Coffee','South America','Peru','High',True,True,True,False,True,False,False,'Moderate Poverty',False,True,315,34,0.0587,27470,-29761,-6028,-5757,-14076)
+loan3 = Loan(3,36900	,'Coffee','South America','Peru','Low',True,True,False,False,True,False,False,'Moderate Poverty',False,False,129,16,0.0721,3797,-20688,-350,-2921,-20162)
+loan4 = Loan(4,90200,'Coffee','South America','Peru','Low',True,True,False,False,True,False,False,'Moderate Poverty',False,False,129,16,0.0525,9736,-26642,-1705,-5241,-23853)
+loan5 = Loan(5,492000,'Macadamia','East Africa','Kenya','Low',False,True,False,False,False,False,False,'Extreme Poverty',True,True,8991,3231,0.0901,58100,-28405,-11400,-41133,-22838)
 
 class Portfolio(object):
     
@@ -315,15 +316,15 @@ class Portfolio(object):
     def portfolio_stats(self):
         print("=========================PORTFOLIO STATSTICS=========================")
         print("SCALE:")
-        print("Total # of Loans:                           " + str(self.n()))
+        print("Total # of Loans:                           " + str(self.n))
         print("Total Loan Amount:                          " + str(self.get_total()))
         print("Total Farmers and Employees Reached:        " + str(self.get_farmers_employees()))
         print("Total Female Farmers and Employees Reached: " + str(self.get_female_farmers_employees()))
         print("=====================================================================")
         print("ADDITIONALITY:")
-        print("% High Additionality:                       " + str(self.get_additionalities.count('High'))/self.n)
-        print("% Intermediate Additionality:               " + str(self.get_additionalities.count('Intermediate'))/self.n)
-        print("% Low Additionality:                        " + str(self.get_additionalities.count('Low'))/self.n)
+        print("% High Additionality:                       " + str(self.get_additionalities().count('High')/self.n))
+        print("% Intermediate Additionality:               " + str(self.get_additionalities().count('Intermediate')/self.n))
+        print("% Low Additionality:                        " + str(self.get_additionalities().count('Low')/self.n))
         print("=====================================================================")
         print("FINANCIAL PERFORMANCE:")
         print("Total Expected Net Income:                 $" + str(self.get_total_net_income()))
@@ -334,6 +335,7 @@ class Portfolio(object):
         print("Weighted Average Default Risk:              " + str(self.get_avg_default_risk()))
         print("Portfolio Rate of Return:                   " + str(self.get_rate_of_return()))
 
+loans = [loan1, loan2, loan3, loan4, loan5]
 
 # 1. csv with columns in same order as arguments of __init__ of loan class
 # 2. iterate through csv, adding each row to list of loans
