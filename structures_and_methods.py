@@ -201,9 +201,21 @@ loan5 = Loan(5,492000,'Macadamia','East Africa','Kenya','Low',False,True,False,F
 class Portfolio(object):
     
     def __init__(self, loans): 
-        self.loans = loans
+        self.loans = loans.copy()
         # Number of loans in portfolio
-        self.n = len(loans)
+        self.n = len(self.loans)
+        
+    def add_loan(self, loan):
+        if loan in self.loans:
+            print("Loan already in portfolio - not added.")
+        else:
+            self.loans.append(loan)
+    
+    def remove_loan(self, loan):
+        if loan in self.loans:
+            self.loans.remove(loan)
+        else:
+            print("Loan not in portfolio - cannot be removed.")
     
     # Total amount of portfolio's loans    
     def get_total(self):
@@ -362,6 +374,17 @@ def plot_loans(loans):
     chart.set(ylim=(-40000,30000))
     chart.set(xlim=(0,10))
 
+def plot_portfolios(portfolios):
+    import pandas, seaborn
+    df = pandas.DataFrame()
+    for i in range(len(portfolios)):
+        df.at[i, 'Portfolio'] = portfolios[i]
+        df.at[i, 'Impact Rating'] = portfolios[i].get_impact_rating()
+        df.at[i, 'Net Income'] = portfolios[i].get_exp_net_income()
+        df.at[i, 'Impact Group'] = portfolios[i].get_impact_group()
+
+#==============================================================================
+
 def greedy(loans, keyFunction):
     # Greedy algorithm, only constraint is we can only take 20 items
     # assumes loans is a list of loan instances, keyFunction is a class method
@@ -396,14 +419,14 @@ def test_greedies(loans):
     print('\nUse greedy by # of female farmers or employees affected to choose loans in portfolio: ')
     test_greedy(loans, Loan.get_female_farmers_employees)
 
-def randomPortfolios(loans, number):
+def randomPortfolios(loans, loans_per_portfolio, number_portfolios):
     # assumes random has been imported already
     # loans is a list of loan instanes, number is an int for the number of random
     # portfolios desired
     import random
     portfolios = []
-    for i in range(number):
-        portfolio = random.sample(loans, 20)
+    for i in range(number_portfolios):
+        portfolio = random.sample(loans, loans_per_portfolio)
         portfolios.append(portfolio)
     return portfolios
         
