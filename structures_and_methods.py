@@ -6,6 +6,7 @@ Created on Wed Mar  6 12:29:23 2019
 """
 
 class Loan(object):
+    #TODO 2
     def __init__(self, loan_number, loan_amount, industry, lending_region, country, \
                  additionality, climate_change, bio_diversity, soil_degradation, \
                  water_scarcity, certification, sust_forestry, clean_tech, poverty_level, \
@@ -199,7 +200,7 @@ loan4 = Loan(4,90200,'Coffee','South America','Peru','Low',True,True,False,False
 loan5 = Loan(5,492000,'Macadamia','East Africa','Kenya','Low',False,True,False,False,False,False,False,'Extreme Poverty',True,True,8991,3231,0.0901,58100,-28405,-11400,-41133,-22838)
 
 class Portfolio(object):
-    
+  #TODO 3  
     def __init__(self, loans): 
         self.loans = loans.copy()
         # Number of loans in portfolio
@@ -446,17 +447,6 @@ def calcPortfolioMetrics(portfolio):
     avg_income = portfolio_income / len(portfolio)
     
     return portfolio_impact, portfolio_income, portfolio_impact_group, avg_income
-
-def plotPortfolios(portfolios):
-    # intended to take a list of loan instances (the portfolio) and generate a 
-    # chart of their positions on the Efficient Impact Frontier
-    import seaborn as sns
-    sns.lmplot(x='impact',
-           y='income',
-           data=portfolios,
-           hue='impact-group',
-           fit_reg=False)
-
 
 
 
