@@ -300,6 +300,22 @@ class Portfolio(object):
             total += loan.get_exp_revenue()
         return total
     
+    def get_total_impact_rating(self):
+        total = 0
+        for loan in self.loans:
+            total += loan.get_impact_rating()
+        return total
+    
+    def get_total_impact_group(self):
+        rating = self.get_total_impact_rating()
+        number = self.n
+        if rating <= (number*3.0):
+            return "Low"
+        elif rating <= (number*6.5):
+            return "Intermediate"
+        else:
+            return "High"
+    
     def get_total_operating_expenses(self):
         total = 0
         for loan in self.loans:
@@ -355,34 +371,36 @@ loans = [loan1, loan2, loan3, loan4, loan5]
 # 3. Create Series of impact ratings, Series of expected incomes
 # 4. Scatter of impact vs expected income
 
-def plot_loans(loans):
-    # intended to take DataFrame of loans data with needed columns to generate a 
-    # scatter plot of Expected Impact (X) vs. Expected Net Income (Y) - either 
-    # for a full universe or for a portfolio
-    import pandas, seaborn
-    df = pandas.DataFrame()
-    for i in range(len(loans)):
-        df.at[i, 'Loan Object'] = loans[i]
-        df.at[i, 'Impact Rating'] = loans[i].get_impact_rating()
-        df.at[i, 'Net Income'] = loans[i].get_exp_net_income()
-        df.at[i, 'Impact Group'] = loans[i].get_impact_group()
-    
-    chart = seaborn.lmplot(x='Impact Rating',
-           y='Net Income',
-           data=df,
-           hue='Impact Group',
-           fit_reg=False)
-    chart.set(ylim=(-40000,30000))
-    chart.set(xlim=(0,10))
-
-def plot_portfolios(portfolios):
-    import pandas, seaborn
-    df = pandas.DataFrame()
-    for i in range(len(portfolios)):
-        df.at[i, 'Portfolio'] = portfolios[i]
-        df.at[i, 'Impact Rating'] = portfolios[i].get_impact_rating()
-        df.at[i, 'Net Income'] = portfolios[i].get_exp_net_income()
-        df.at[i, 'Impact Group'] = portfolios[i].get_impact_group()
+# =============================================================================
+# def plot_loans(loans):
+#     # intended to take DataFrame of loans data with needed columns to generate a 
+#     # scatter plot of Expected Impact (X) vs. Expected Net Income (Y) - either 
+#     # for a full universe or for a portfolio
+#     import pandas, seaborn
+#     df = pandas.DataFrame()
+#     for i in range(len(loans)):
+#         df.at[i, 'Loan Object'] = loans[i]
+#         df.at[i, 'Impact Rating'] = loans[i].get_impact_rating()
+#         df.at[i, 'Net Income'] = loans[i].get_exp_net_income()
+#         df.at[i, 'Impact Group'] = loans[i].get_impact_group()
+#     
+#     chart = seaborn.lmplot(x='Impact Rating',
+#            y='Net Income',
+#            data=df,
+#            hue='Impact Group',
+#            fit_reg=False)
+#     chart.set(ylim=(-40000,30000))
+#     chart.set(xlim=(0,10))
+# 
+# def plot_portfolios(portfolios):
+#     import pandas, seaborn
+#     df = pandas.DataFrame()
+#     for i in range(len(portfolios)):
+#         df.at[i, 'Portfolio'] = portfolios[i]
+#         df.at[i, 'Impact Rating'] = portfolios[i].get_impact_rating()
+#         df.at[i, 'Net Income'] = portfolios[i].get_exp_net_income()
+#         df.at[i, 'Impact Group'] = portfolios[i].get_total_impact_group()
+# =============================================================================
 
 #==============================================================================
 
@@ -420,16 +438,18 @@ def test_greedies(loans):
     print('\nUse greedy by # of female farmers or employees affected to choose loans in portfolio: ')
     test_greedy(loans, Loan.get_female_farmers_employees)
 
-def randomPortfolios(loans, loans_per_portfolio, number_portfolios):
-    # assumes random has been imported already
-    # loans is a list of loan instanes, number is an int for the number of random
-    # portfolios desired
-    import random
-    portfolios = []
-    for i in range(number_portfolios):
-        portfolio = random.sample(loans, loans_per_portfolio)
-        portfolios.append(portfolio)
-    return portfolios
+# =============================================================================
+# def randomPortfolios(loans, loans_per_portfolio, number_portfolios):
+#     # assumes random has been imported already
+#     # loans is a list of loan instanes, number is an int for the number of random
+#     # portfolios desired
+#     import random
+#     portfolios = []
+#     for i in range(number_portfolios):
+#         portfolio = random.sample(loans, loans_per_portfolio)
+#         portfolios.append(portfolio)
+#     return portfolios
+# =============================================================================
         
 def calcPortfolioMetrics(portfolio):
     portfolio_impact = 0

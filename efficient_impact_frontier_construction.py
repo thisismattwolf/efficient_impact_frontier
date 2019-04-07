@@ -107,8 +107,26 @@ def plot_loans(loans, minIncome=-40000, maxIncome=30000, \
     chart.set(ylim=(minIncome,maxIncome))
     chart.set(xlim=(minImpact,maxImpact))
 
+def randomPortfolios(loans, r, n):
+    """========================================================================
+    This function takes a list of Loan() objects in a Pandas dataframe, as well
+    as two number: the desired number of random portfolios (r), and the number of 
+    loans per portfolio (n). It then builds r Portfolio() instances of n Loan
+    instances, and returns them in a Pandas dataframe with the column header, 
+    "Portfolio Object".
+    ========================================================================"""
+    import random
+    import pandas as pd
+    from structures_and_methods import Portfolio
+    portfolios = []
+    for i in range(r):
+        portfolio = Portfolio(random.sample(loans, n))
+        portfolios.append(portfolio)
+    portfolios = pd.DataFrame(portfolios, columns=["Portfolio Object"])
+    return portfolios
+
 def plot_portfolios(portfolios):
-#TODO 1
+
     """========================================================================
     This function uses the seaborn lib to plot a set of Portfolio() class
     instances along two axes - net income and impact rating.
@@ -120,10 +138,22 @@ def plot_portfolios(portfolios):
     df = pandas.DataFrame()
     for i in range(len(portfolios)):
         df.at[i, 'Portfolio Object'] = portfolios.at[i, 'Portfolio Object']
+        df.at[i, 'Required Subsidy'] = portfolios.at[i, 'Portfolio Object'].get_total_net_income()
+        df.at[i, 'Impact Rating'] = portfolios.at[i, 'Portfolio Object'].get_total_impact_rating()
+        df.at[i, 'Impact Group'] = portfolios.at[i, 'Portfolio Object'].get_total_impact_group()
         
+    chart = seaborn.lmplot(x='Impact Rating', y='Required Subsidy', data=df,\
+                           hue='Impact Group', fit_reg=False)
+    #chart.set(ylim=(minIncome,maxIncome))
+    #chart.set(xlim=(minImpact,maxImpact))
+  
+data = data_prepare()
+portfolios = randomPortfolios(list(data['Loan Object']), 100000, 20)
+plot_portfolios(portfolios)
+
+      
 #TODO
-        # 1. Finish plot_portfolios
-        # 2. Allow Loan() class to take user-specified impact heuristic
-        # 3. Allow Portfolio class to take user-specified impact heuristic
-        # 4. Random portfolio generator with constraints
-        # 5. portfolio_impact rebalance
+        # 1. Allow Loan() class to take user-specified impact heuristic
+        # 2. Allow Portfolio class to take user-specified impact heuristic
+        # 3. Random portfolio generator with constraints
+        # 4. portfolio_impact rebalance
