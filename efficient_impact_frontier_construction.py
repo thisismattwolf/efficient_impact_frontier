@@ -148,5 +148,6 @@ def plot_portfolios(portfolios):
 #TODO
         # 1. Allow Loan() class to take user-specified impact heuristic
         # 2. Allow Portfolio class to take user-specified impact heuristic
+        # 3. Allow Portfolio class to take user-specified constraints
         # 3. Random portfolio generator with constraints
         # 4. portfolio_impact rebalance

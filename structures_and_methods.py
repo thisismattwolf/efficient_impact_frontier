@@ -350,26 +350,25 @@ class Portfolio(object):
 
 
 def root_capital_impact_function(loan):
-     """=====================================
-    This function takes a Loan class instance as its argument, and calculates
-    the Expected Impact Rating according to Root Capital's Methodology.
+ """=====================================
+This function takes a Loan class instance as its argument, and calculates
+the Expected Impact Rating according to Root Capital's Methodology.
 
-    The methodology is detailed in the report, "The Investor's Perspective: 
-    Constructing a portfolio on the efficient impact-financial frontier within
-    one asset class", written by Root Capital and the Impact Management Project.
-    
-    It assigns an impact rating scaled from 0 to 10 (less to more impact) based
-    on the loan's attributes. 
-    
-    The function returns a float value indicating the expected impact rating.
-    ====================================="""
+The methodology is detailed in the report, "The Investor's Perspective: 
+Constructing a portfolio on the efficient impact-financial frontier within
+one asset class", written by Root Capital and the Impact Management Project.
+
+It assigns an impact rating scaled from 0 to 10 (less to more impact) based
+on the loan's attributes. 
+
+The function returns a float value indicating the expected impact rating.
+====================================="""
     points = 0
     # +1 point if livelihood == True
     if loan.livelihood == True:
         points += 1.0
     
-    # at most +1 for environmental /
-    # sustainability traits
+    # at most +1 for environmental / sustainability traits
     if loan.certification == True:
         points += 0.5
     if loan.sust_forestry == True:
