@@ -6,13 +6,18 @@ Created on Wed Mar  6 12:29:23 2019
 """
 
 class Loan(object):
-    #TODO 2
+    """========================================================================
+    This class represents a Root Capital loan, including several attributes
+    that represent the different financial and impact-related qualities of the
+    loan.
+    ========================================================================"""
     def __init__(self, loan_number, loan_amount, industry, lending_region, country, \
                  additionality, climate_change, bio_diversity, soil_degradation, \
                  water_scarcity, certification, sust_forestry, clean_tech, poverty_level, \
                  gender, livelihood, farmers_employees, female_farmers_employees, \
                  default_prob, exp_revenue, exp_op_costs, exp_cost_debt, \
-                 exp_cost_risk, exp_net_income):
+                 exp_cost_risk, exp_net_income, \
+                 impact_function):
         self.loan_number = loan_number
         self.loan_amount = loan_amount
         self.industry = industry
@@ -37,6 +42,7 @@ class Loan(object):
         self.exp_cost_debt = exp_cost_debt
         self.exp_cost_risk = exp_cost_risk
         self.exp_net_income = exp_net_income
+        self.impact_function = impact_function
         
     def get_loan_number(self):
         return self.loan_number
@@ -110,97 +116,75 @@ class Loan(object):
     def get_exp_net_income(self):
         return self.exp_net_income
     
-    def livelihoods_points(self):
-        # max points contribution: 1.0
-        if self.livelihood == True:
-            return 1.0
-        else:
-            return 0.0
-    
-    def environment_and_climate_points(self):
-        # max points contribution: 1.0
-        rating = 0
-        if self.certification == True:
-            rating = rating + 0.5
-        if self.sust_forestry == True:
-            rating = rating + 0.25
-        if self.clean_tech == True:
-            rating = rating + 0.25
-        return rating
-    
-    def scale_points(self):
-        # max points contribution: 0.5
-        rating = 0
-        if self.farmers_employees >= 1500:
-            rating = rating + 0.5
-        if self.farmers_employees >= 500:
-            rating = rating + 0.25
-        return rating
-    
-    def poverty_level_points(self):
-        # max points contribution: 0.5
-        rating = 0    
-        if self.poverty_level == 'Extreme Poverty':
-            rating = rating + 0.5
-        elif self.poverty_level == 'High Poverty':
-            rating = rating + 0.25
-        else:
-            rating = rating
-        return rating
-        
-    def environmental_vulnerability_points(self):
-        # max points contribution: 0.5
-        rating = 0
-        if self.bio_diversity == True:
-            rating = rating + 1
-        if self.soil_degradation == True:
-            rating = rating + 1
-        if self.water_scarcity == True:
-            rating = rating + 1
-        if self.climate_change == True:
-            rating = rating + 1
-
-        if rating > 1:
-            return 0.5
-        elif rating > 0:
-            return 0.25
-        else: 
-            return 0.0
-
-    def additionality_points(self):
-        if self.additionality == 'High':
-            return 6.5
-        elif self.additionality == 'Medium':
-            return 3.0
-        else:
-            return 0.0    
-
     def get_impact_rating(self):
-        rating = self.additionality_points() + \
-                self.environmental_vulnerability_points() + \
-                self.poverty_level_points() + \
-                self.scale_points() + \
-                self.environment_and_climate_points() + \
-                self.livelihoods_points()        
-        return rating
+        return self.impact_function
     
-    def get_impact_group(self):
-        if self.get_impact_rating() <= 3.0:
-            return 'Low'
-        elif self.get_impact_rating() <= 6.5:
+    def get_root_capital_impact_rating(self):
+        points = 0
+        # +1 point if livelihood == True
+        if self.livelihood == True:
+            points += 1.0
+        
+        # at most +1 for environmental /
+        # sustainability traits
+        if self.certification == True:
+            points += 0.5
+        if self.sust_forestry == True:
+            points += 0.25
+        if self.clean_tech == True:
+            points += 0.25
+        
+        # at most +0.5 points for scale
+        if self.farmers_employees >= 1500:
+            points += 0.5
+        elif self.farmers_employees >= 500:
+            points += 0.25
+        
+        # at most +1 point for poverty level   
+        if self.poverty_level == 'Extreme Poverty':
+            points += 0.5
+        elif self.poverty_level == 'High Poverty':
+            points += 0.25
+        
+        # at most 0.5 points for environmental vulnerability
+        temp = 0
+        if self.bio_diversity == True:
+            temp += 1
+        if self.soil_degradation == True:
+            temp += 1
+        if self.water_scarcity == True:
+            temp += 1
+        if self.climate_change == True:
+            temp += 1
+
+        if temp > 1:
+            points += 0.5
+        elif temp > 0:
+            points += 0.25
+        
+        #6.5 points if high, 3 if medium
+        if self.additionality == 'High':
+            points += 6.5
+        elif self.additionality == 'Medium':
+            points += 3.0
+        
+        return points
+    
+    def get_root_capital_impact_group(self):
+        if self.get_root_capital_impact_rating() > 6.5:
+            return 'High'
+        elif self.get_root_capital_impact_rating() > 3.0:
             return 'Intermediate'
         else:
-            return 'High'
-
-# EXAMPLE LOANS
-loan1 = Loan(1,410000,'Coffee','South America','Peru','Low',True,True,True,False,True,False,False,'Moderate Poverty',False,True,315,34,0.00427,37323,-19215,-8444,-5215,4449)
-loan2 = Loan(2,102500,'Coffee','South America','Peru','High',True,True,True,False,True,False,False,'Moderate Poverty',False,True,315,34,0.0587,27470,-29761,-6028,-5757,-14076)
-loan3 = Loan(3,36900	,'Coffee','South America','Peru','Low',True,True,False,False,True,False,False,'Moderate Poverty',False,False,129,16,0.0721,3797,-20688,-350,-2921,-20162)
-loan4 = Loan(4,90200,'Coffee','South America','Peru','Low',True,True,False,False,True,False,False,'Moderate Poverty',False,False,129,16,0.0525,9736,-26642,-1705,-5241,-23853)
-loan5 = Loan(5,492000,'Macadamia','East Africa','Kenya','Low',False,True,False,False,False,False,False,'Extreme Poverty',True,True,8991,3231,0.0901,58100,-28405,-11400,-41133,-22838)
+            return 'Low'
 
 class Portfolio(object):
-  #TODO 3  
+    """========================================================================
+    This class represents a portfolio of Root Capital loans. It is a typical
+    Python list of Loan class instances. Its methods calculate portfolio 
+    metrics and characteristics. The method portfolio_stats() prints these 
+    stats. 
+    ========================================================================"""
     def __init__(self, loans): 
         self.loans = loans.copy()
         # Number of loans in portfolio
@@ -364,45 +348,70 @@ class Portfolio(object):
         print("Weighted Average Default Risk:              " + str(self.get_avg_default_risk()))
         print("Portfolio Rate of Return:                   " + str(self.get_rate_of_return()))
 
-loans = [loan1, loan2, loan3, loan4, loan5]
 
-# 1. csv with columns in same order as arguments of __init__ of loan class
-# 2. iterate through csv, adding each row to list of loans
-# 3. Create Series of impact ratings, Series of expected incomes
-# 4. Scatter of impact vs expected income
+def root_capital_impact_function(loan):
+     """=====================================
+    This function takes a Loan class instance as its argument, and calculates
+    the Expected Impact Rating according to Root Capital's Methodology.
 
-# =============================================================================
-# def plot_loans(loans):
-#     # intended to take DataFrame of loans data with needed columns to generate a 
-#     # scatter plot of Expected Impact (X) vs. Expected Net Income (Y) - either 
-#     # for a full universe or for a portfolio
-#     import pandas, seaborn
-#     df = pandas.DataFrame()
-#     for i in range(len(loans)):
-#         df.at[i, 'Loan Object'] = loans[i]
-#         df.at[i, 'Impact Rating'] = loans[i].get_impact_rating()
-#         df.at[i, 'Net Income'] = loans[i].get_exp_net_income()
-#         df.at[i, 'Impact Group'] = loans[i].get_impact_group()
-#     
-#     chart = seaborn.lmplot(x='Impact Rating',
-#            y='Net Income',
-#            data=df,
-#            hue='Impact Group',
-#            fit_reg=False)
-#     chart.set(ylim=(-40000,30000))
-#     chart.set(xlim=(0,10))
-# 
-# def plot_portfolios(portfolios):
-#     import pandas, seaborn
-#     df = pandas.DataFrame()
-#     for i in range(len(portfolios)):
-#         df.at[i, 'Portfolio'] = portfolios[i]
-#         df.at[i, 'Impact Rating'] = portfolios[i].get_impact_rating()
-#         df.at[i, 'Net Income'] = portfolios[i].get_exp_net_income()
-#         df.at[i, 'Impact Group'] = portfolios[i].get_total_impact_group()
-# =============================================================================
+    The methodology is detailed in the report, "The Investor's Perspective: 
+    Constructing a portfolio on the efficient impact-financial frontier within
+    one asset class", written by Root Capital and the Impact Management Project.
+    
+    It assigns an impact rating scaled from 0 to 10 (less to more impact) based
+    on the loan's attributes. 
+    
+    The function returns a float value indicating the expected impact rating.
+    ====================================="""
+    points = 0
+    # +1 point if livelihood == True
+    if loan.livelihood == True:
+        points += 1.0
+    
+    # at most +1 for environmental /
+    # sustainability traits
+    if loan.certification == True:
+        points += 0.5
+    if loan.sust_forestry == True:
+        points += 0.25
+    if loan.clean_tech == True:
+        points += 0.25
+    
+    # at most +0.5 points for scale
+    if loan.farmers_employees >= 1500:
+        points += 0.5
+    elif loan.farmers_employees >= 500:
+        points += 0.25
+    
+    # at most +1 point for poverty level   
+    if loan.poverty_level == 'Extreme Poverty':
+        points += 0.5
+    elif loan.poverty_level == 'High Poverty':
+        points += 0.25
+    
+    # at most 0.5 points for environmental vulnerability
+    temp = 0
+    if loan.bio_diversity == True:
+        temp += 1
+    if loan.soil_degradation == True:
+        temp += 1
+    if loan.water_scarcity == True:
+        temp += 1
+    if loan.climate_change == True:
+        temp += 1
 
-#==============================================================================
+    if temp > 1:
+        points += 0.5
+    elif temp > 0:
+        points += 0.25
+    
+    #6.5 points if high, 3 if medium
+    if loan.additionality == 'High':
+        points += 6.5
+    elif loan.additionality == 'Medium':
+        points += 3.0
+    
+    return points
 
 def greedy(loans, keyFunction):
     # Greedy algorithm, only constraint is we can only take 20 items
@@ -438,19 +447,6 @@ def test_greedies(loans):
     print('\nUse greedy by # of female farmers or employees affected to choose loans in portfolio: ')
     test_greedy(loans, Loan.get_female_farmers_employees)
 
-# =============================================================================
-# def randomPortfolios(loans, loans_per_portfolio, number_portfolios):
-#     # assumes random has been imported already
-#     # loans is a list of loan instanes, number is an int for the number of random
-#     # portfolios desired
-#     import random
-#     portfolios = []
-#     for i in range(number_portfolios):
-#         portfolio = random.sample(loans, loans_per_portfolio)
-#         portfolios.append(portfolio)
-#     return portfolios
-# =============================================================================
-        
 def calcPortfolioMetrics(portfolio):
     portfolio_impact = 0
     portfolio_income = 0

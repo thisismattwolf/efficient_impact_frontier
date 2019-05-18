@@ -67,12 +67,13 @@ def data_prepare():
                                     data.at[i, 'Expected Operating Expenses'] ,\
                                     data.at[i, 'Expected Cost of Debt'] ,\
                                     data.at[i, 'Expected Cost of Risk'] ,\
-                                    data.at[i, 'Expected Net Loan Income'])
+                                    data.at[i, 'Expected Net Loan Income'] ,\
+                                    0)
     
     # Use the Loan() class method get_impact_rating() to calculate the impact 
     # rating and group for each loan, add as columns to the df
     for i in data.index:
-        data.at[i, 'Expected Impact Rating'] = data.at[i, 'Loan Object'].get_impact_rating()
+        data.at[i, 'Expected Impact Rating'] = data.at[i, 'Loan Object'].get_root_capital_impact_rating()
         if data.at[i, 'Expected Impact Rating'] <= 3:
             data.at[i, 'Impact Group'] = 'Low'
         elif data.at[i, 'Expected Impact Rating'] <= 6.5:
@@ -83,8 +84,7 @@ def data_prepare():
     # return the prepared df
     return data
 
-def plot_loans(loans, minIncome=-40000, maxIncome=30000, \
-                     minImpact=0, maxImpact=10):
+def plot_loans(loans):
     """========================================================================
     This function uses the seaborn lib to plot a set of Loan() class instances
     along two axes - net income, and impact rating.
@@ -95,17 +95,17 @@ def plot_loans(loans, minIncome=-40000, maxIncome=30000, \
     df = pandas.DataFrame()
     for i in range(len(loans)):
         df.at[i, 'Loan Object'] = loans.at[i, 'Loan Object']
-        df.at[i, 'Impact Rating'] = loans.at[i, 'Loan Object'].get_impact_rating()
+        df.at[i, 'Expected Impact Rating'] = loans.at[i, 'Loan Object'].get_root_capital_impact_rating()
         df.at[i, 'Net Income'] = loans.at[i, 'Loan Object'].get_exp_net_income()
-        df.at[i, 'Impact Group'] = loans.at[i, 'Loan Object'].get_impact_group()
-    
-    chart = seaborn.lmplot(x='Impact Rating',
+        df.at[i, 'Impact Group'] = loans.at[i, 'Loan Object'].get_root_capital_impact_group()
+    print(df.head())
+    chart = seaborn.lmplot(x='Expected Impact Rating',
            y='Net Income',
            data=df,
            hue='Impact Group',
            fit_reg=False)
-    chart.set(ylim=(minIncome,maxIncome))
-    chart.set(xlim=(minImpact,maxImpact))
+    #chart.set(ylim=(minIncome,maxIncome))
+    #chart.set(xlim=(minImpact,maxImpact))
 
 def randomPortfolios(loans, r, n):
     """========================================================================
@@ -144,13 +144,6 @@ def plot_portfolios(portfolios):
         
     chart = seaborn.lmplot(x='Impact Rating', y='Required Subsidy', data=df,\
                            hue='Impact Group', fit_reg=False)
-    #chart.set(ylim=(minIncome,maxIncome))
-    #chart.set(xlim=(minImpact,maxImpact))
-  
-data = data_prepare()
-portfolios = randomPortfolios(list(data['Loan Object']), 100000, 20)
-plot_portfolios(portfolios)
-
       
 #TODO
         # 1. Allow Loan() class to take user-specified impact heuristic
