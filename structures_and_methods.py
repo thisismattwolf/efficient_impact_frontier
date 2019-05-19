@@ -290,12 +290,30 @@ class Portfolio(object):
             total += loan.get_impact_rating()
         return total
     
+    
     def get_total_impact_group(self):
         rating = self.get_total_impact_rating()
         number = self.n
         if rating <= (number*3.0):
             return "Low"
         elif rating <= (number*6.5):
+            return "Intermediate"
+        else:
+            return "High"
+    
+    def get_weighted_avg_impact_rating(self):
+        total = 0
+        for loan in self.loans:
+            # each loan's contribution to 
+            total += ((loan.get_loan_amount() / sum(self.get_loan_amounts())) * \
+                       loan.get_impact_rating())
+        return total
+    
+    def get_weighted_avg_impact_group(self):
+        rating = self.get_weighted_avg_impact_rating()
+        if rating <= 3.0:
+            return "Low"
+        elif rating <= 6.5:
             return "Intermediate"
         else:
             return "High"
