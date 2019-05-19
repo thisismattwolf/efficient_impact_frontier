@@ -149,7 +149,7 @@ def random_portfolios_by_n(loans, r, n):
 
 #TO-DO Allow choice between total and weighted average impact metrics and 
     # net incomes. 
-def plot_portfolios_impact(portfolios):
+def plot_portfolios_impact(portfolios, impact_basis='Total'):
     """========================================================================
     Plots Portofolios' Root Capital Impact Score (X) vs. Net Income (Y)
     
@@ -158,15 +158,30 @@ def plot_portfolios_impact(portfolios):
     ========================================================================"""
     import pandas, seaborn
     
-    df = pandas.DataFrame()
-    for i in range(len(portfolios)):
-        df.at[i, 'Portfolio Object'] = portfolios.at[i, 'Portfolio Object']
-        df.at[i, 'Required Subsidy'] = portfolios.at[i, 'Portfolio Object'].get_total_net_income()
-        df.at[i, 'Impact Rating'] = portfolios.at[i, 'Portfolio Object'].get_total_impact_rating()
-        df.at[i, 'Impact Group'] = portfolios.at[i, 'Portfolio Object'].get_total_impact_group()
+    # if the impact_basis argument is correctly input, do this
+    if impact_basis == 'Total':
+        df = pandas.DataFrame()
+        for i in range(len(portfolios)):
+            df.at[i, 'Portfolio Object'] = portfolios.at[i, 'Portfolio Object']
+            df.at[i, 'Required Subsidy'] = portfolios.at[i, 'Portfolio Object'].get_total_net_income()
+            df.at[i, 'Impact Rating'] = portfolios.at[i, 'Portfolio Object'].get_total_impact_rating()
+            df.at[i, 'Impact Group'] = portfolios.at[i, 'Portfolio Object'].get_total_impact_group()
+        chart = seaborn.lmplot(x='Impact Rating', y='Required Subsidy', data=df,\
+                               hue='Impact Group', fit_reg=False)
         
-    chart = seaborn.lmplot(x='Impact Rating', y='Required Subsidy', data=df,\
-                           hue='Impact Group', fit_reg=False)
+    elif impact_basis == 'WA':
+        for i in range(len(portfolios)):
+            df.at[i, 'Portfolio Object'] = portfolios.at[i, 'Portfolio Object']
+            df.at[i, 'Required Subsidy'] = portfolios.at[i, 'Portfolio Object'].get_total_net_income()
+            df.at[i, 'Impact Rating'] = portfolios.at[i, 'Portfolio Object'].get_weighted_avg_impact_rating()
+            df.at[i, 'Impact Group'] = portfolios.at[i, 'Portfolio Object'].get_weighted_avg_impact_group()
+                
+        chart = seaborn.lmplot(x='Impact Rating', y='Required Subsidy', data=df,\
+                               hue='Impact Group', fit_reg=False)
+    
+    else:
+        print('Error: impact_basis argument must be either "Total" or "WA"')
+    
 
 #TO DO: Create weighted avg default risk getter for Portfolio class. Allow 
     #choice between total and weighted avg net income metrics
