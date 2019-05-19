@@ -339,7 +339,7 @@ class Portfolio(object):
     def get_rate_of_return(self):
         return self.get_total_net_income() / self.get_total()
     
-    def get_avg_default_risk(self):
+    def get_weighted_avg_default_risk(self):
         lists = self.get_loan_amounts(), self.get_default_probs()
         num = sum([x * y for x, y in zip(*lists)])
         return num / self.get_total()

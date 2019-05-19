@@ -198,7 +198,7 @@ def plot_portfolios_risk(portfolios):
     for i in range(len(portfolios)):
         df.at[i, 'Portfolio Object'] = portfolios.at[i, 'Portfolio Object']
         df.at[i, 'Required Subsidy'] = portfolios.at[i, 'Portfolio Object'].get_total_net_income()
-        df.at[i, 'Impact Rating'] = portfolios.at[i, 'Portfolio Object'].get_total_impact_rating()
+        df.at[i, 'Default Risk'] = portfolios.at[i, 'Portfolio Object'].get_weighted_avg_default_risk()
         df.at[i, 'Impact Group'] = portfolios.at[i, 'Portfolio Object'].get_total_impact_group()
         
     chart = seaborn.lmplot(x='Impact Rating', y='Required Subsidy', data=df,\
