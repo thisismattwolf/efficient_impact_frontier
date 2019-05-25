@@ -286,7 +286,7 @@ class Portfolio(object):
     def get_total_impact_rating(self):
         total = 0
         for loan in self.loans:
-            total += loan.get_impact_rating()
+            total += loan.get_root_capital_impact_rating()
         return total
     
     
@@ -305,7 +305,7 @@ class Portfolio(object):
         for loan in self.loans:
             # each loan's contribution to 
             total += ((loan.get_loan_amount() / sum(self.get_loan_amounts())) * \
-                       loan.get_impact_rating())
+                       loan.get_root_capital_impact_rating())
         return total
     
     def get_weighted_avg_impact_group(self):

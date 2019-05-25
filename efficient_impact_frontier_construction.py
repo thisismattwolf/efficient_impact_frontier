@@ -38,7 +38,7 @@ def data_prepare():
     data = pd.read_csv('data.csv', converters=field_converters)
     
     # Import the Loan() class
-    from structures_and_methods import Loan
+    from classes import Loan
     
     # Create a Loan() instance for each row, add the instances to another col
     # of the df
@@ -139,10 +139,10 @@ def random_portfolios_by_n(loans, r, n):
     ========================================================================"""
     import random
     import pandas as pd
-    from structures_and_methods import Portfolio
+    from classes import Portfolio
     portfolios = []
     for i in range(r):
-        portfolio = Portfolio(random.sample(loans, n))
+        portfolio = Portfolio(random.sample(list(loans['Loan Object']), n))
         portfolios.append(portfolio)
     portfolios = pd.DataFrame(portfolios, columns=["Portfolio Object"])
     return portfolios
@@ -157,15 +157,15 @@ def plot_portfolios_impact(portfolios, impact_basis='Total'):
     OUTPUT:  Seaborn Chart
     ========================================================================"""
     import pandas, seaborn
-    
+    df = pandas.DataFrame()
     # if the impact_basis argument is correctly input, do this
     if impact_basis == 'Total':
-        df = pandas.DataFrame()
         for i in range(len(portfolios)):
             df.at[i, 'Portfolio Object'] = portfolios.at[i, 'Portfolio Object']
             df.at[i, 'Required Subsidy'] = portfolios.at[i, 'Portfolio Object'].get_total_net_income()
             df.at[i, 'Impact Rating'] = portfolios.at[i, 'Portfolio Object'].get_total_impact_rating()
             df.at[i, 'Impact Group'] = portfolios.at[i, 'Portfolio Object'].get_total_impact_group()
+        
         chart = seaborn.lmplot(x='Impact Rating', y='Required Subsidy', data=df,\
                                hue='Impact Group', fit_reg=False)
         
@@ -182,9 +182,8 @@ def plot_portfolios_impact(portfolios, impact_basis='Total'):
     else:
         print('Error: impact_basis argument must be either "Total" or "WA"')
     
+    #return df
 
-#TO DO: Create weighted avg default risk getter for Portfolio class. Allow 
-    #choice between total and weighted avg net income metrics
 def plot_portfolios_risk(portfolios):
     """========================================================================
     Plots Portofolios' Risk of Default (X) vs. Net Income (Y)
